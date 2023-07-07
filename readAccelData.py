@@ -3,12 +3,13 @@ import time
 from serialPorts import serial_ports
 import numpy as np
 import matplotlib.pyplot as plt
-
-ports = serial_ports()
-# print(ports)
-print("Connecting to "+ports[-1]+"...")
-arduino = serial.Serial(ports[-1], 9600)
-print("Connected")
+def connect():
+    ports = serial_ports()
+    # print(ports)
+    print("Connecting to "+ports[-1]+"...")
+    arduino = serial.Serial(ports[-1], 9600)
+    print("Connected")
+    return arduino
 def log(splitTime, totalTime): #in seconds
     sleepTime = splitTime/10.0
     print("Start log...")
@@ -26,17 +27,20 @@ def log(splitTime, totalTime): #in seconds
         time.sleep(sleepTime)
     print("Log complete.")
     return data
+def main():
+    arduino = connect()
+    data = np.array(log(0.001,5))
 
-data = np.array(log(0.001,5))
+    plt.figure(figsize=(10,5))
+    # print(data[:,0])
+    plt.plot(data[:, 0], data[:, 1])
+    plt.xlabel("Time (s)")
+    plt.ylabel("Voltage (V)")
+    plt.show()
 
-plt.figure(figsize=(10,5))
-# print(data[:,0])
-plt.plot(data[:, 0], data[:, 1])
-plt.xlabel("Time (s)")
-plt.ylabel("Voltage (V)")
-plt.show()
-
-arduino.close()
+    arduino.close()
+if __name__=="__main__":
+    main()
 
 
 
